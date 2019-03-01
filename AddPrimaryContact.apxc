@@ -1,0 +1,25 @@
+public class AddPrimaryContact implements Queueable {
+    
+    private Contact c;
+    private String state;  
+    
+    // Constructor
+    public AddPrimaryContact(Contact c, String state) {
+		this.c = c;
+        this.state = state;
+    }
+    public void execute(QueueableContext context) {
+        List<Account> AccountList = [SELECT Id, Name, (SELECT Id, FirstName, LastName from contacts) FROM Account WHERE BillingState = :state LIMIT 200];
+        List<Contact> ContactList = new List<Contact>();
+        
+        for (Account acct : AccountList) {
+          Contact cont = c.clone(false, true);
+          cont.AccountId = acct.Id;
+          ContactList.add(cont);
+        }
+        if (ContactList.size() > 0) {
+            insert ContactList;
+        }
+    }
+    
+}

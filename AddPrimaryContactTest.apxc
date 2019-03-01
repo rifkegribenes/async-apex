@@ -1,0 +1,26 @@
+@isTest
+public class AddPrimaryContactTest {
+    @isTest static void testMethod1() {
+        // setup
+        List<Account> testAcctList = new List<Account>();
+        for (Integer i = 0; i < 50; i++) {
+            testAcctList.add(new Account(BillingState = 'OR', name = 'TestAccount' + i));
+        }
+        for (Integer j = 0; j < 50; j++) {
+            testAcctList.add(new Account(BillingState = 'WA', name = 'TestAccount' + j));
+		}
+        insert testAcctList;
+        
+        Contact c = new Contact(FirstName='Test', LastName='test');
+        String state = 'OR';
+        AddPrimaryContact apc = new AddPrimaryContact(c, state);
+        
+        // execution
+        Test.startTest();
+        	System.enqueueJob(apc);
+        Test.stopTest();
+        
+        // result
+        System.assertEquals(50, [SELECT count() FROM Contact WHERE accountId IN (SELECT Id FROM Account WHERE BillingState = :state)]);
+    }
+}
