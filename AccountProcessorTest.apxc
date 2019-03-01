@@ -1,0 +1,22 @@
+@IsTest
+public class AccountProcessorTest {
+    public static testmethod void testMethod1() 
+    {
+        Account a = new Account(Name = 'Test Account');
+        Insert a;
+
+        Contact c = New Contact(AccountId = a.Id, LastName='TestLastName');
+        Insert c;
+        
+        set<Id> idSet = new Set<Id>();
+        idSet.add(a.id);
+ 
+        Test.startTest();
+            AccountProcessor.countContacts(idSet);
+        Test.stopTest();
+        
+        Account acct = [SELECT Number_of_Contacts__c FROM Account WHERE id = :a.id LIMIT 1];
+        System.assertEquals ( Integer.valueOf(acct.Number_of_Contacts__c) ,1);
+  }
+  
+}

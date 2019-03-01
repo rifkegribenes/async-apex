@@ -1,0 +1,11 @@
+public class AccountProcessor {
+    @future(callout=true)
+    public static void countContacts(Set<id> idSet) {
+        List<Account> accountList = [SELECT id,Number_of_Contacts__c , (SELECT id FROM contacts ) FROM Account WHERE id in :idSet ];
+        for ( Account acct : accountList) {
+            List<Contact> contactList = acct.contacts;
+            acct.Number_of_Contacts__c = contactList.size();
+        }
+        update accountList;
+    }
+}
